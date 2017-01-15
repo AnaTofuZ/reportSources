@@ -28,4 +28,4 @@ for  (1..10000000){
 
 }
 
-$dbh->disconnext;
+$dbh->disconnect;
