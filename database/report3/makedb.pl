@@ -13,8 +13,19 @@ my $dbh = DBI->connect("DBI:mysql:exam2","$ARGV[0]","$ARGV[1]");
 
 my $random = String::Random->new->randregex('[A-M]');
 
-my $query = $dbh->prepare("CREATE TABLE noti1(A INT(3000),B CHAR(2),C VARCHAR(6) )");
+my $query = $dbh->prepare("CREATE TABLE noti1(A INT,B CHAR(2),C VARCHAR(6) )");
 
 $query->execute;
+my @sex =qw[ male female];
 
+my $sth =$dbh->prepare("INSERT INTO noti1 VALUES(?,?,?)");
 
+for  (1..10000000){
+    my $randomNum = int(rand(3000)) +1;
+
+    my $randomChar = String::Random->new->randregex('[A-M]');
+    $sth->execute($randomNum,"$randomChar$randomChar","$sex[int(rand(1))]");
+
+}
+
+$dbh->disconnext;
