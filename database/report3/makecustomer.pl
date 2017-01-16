@@ -18,12 +18,15 @@ my $query = $dbh->prepare("CREATE TABLE CUSTOMER(NAME char(20),NEDAN int,KOSUU i
 $query->execute;
 
 my $sth =$dbh->prepare("INSERT INTO CUSTOMER VALUES(?,?,?,?)");
+my @NEDANs = (0,2000..2000000);
 
 for  (1..10000000){
-    my $randomNum = int(rand(3000)) +1;
+    my $KOKUU = int(rand(2001)) ;
 
-    my $randomChar = String::Random->new->randregex('[A-M]');
-    $sth->execute($randomNum,"$randomChar$randomChar","$sex[int(rand(2))]");
+    my $NEDAN = int(int(rand(2000001))/100)*100;
+
+    my $NAME = String::Random->new->randregex('[A-M]{5}');
+    $sth->execute("$NAME",$NEDANs[$NEDAN+1],$KOKUU,0.85);
 
 }
 

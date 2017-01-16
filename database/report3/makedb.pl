@@ -24,7 +24,7 @@ for  (1..10000000){
     my $randomNum = int(rand(3000)) +1;
 
     my $randomChar = String::Random->new->randregex('[A-M]');
-    $sth->execute($randomNum,"$randomChar$randomChar","$sex[int(rand(1))]");
+    $sth->execute($randomNum,"$randomChar$randomChar","$sex[int(rand(2))]");
 
 }
 
