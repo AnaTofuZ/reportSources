@@ -15,7 +15,9 @@ my $dbh = DBI->connect("DBI:mysql:exam2","$ARGV[0]","$ARGV[1]",
         AutoCommit => 0
     });
 
-my $sth = $dbh->prepare("select * from noti1");
+
+my $sth = $dbh->prepare("select A from noti1 where A > 3000");
+say("select A from noti1 where A > 3000");
 
 my $result = 0;
 
@@ -32,3 +34,26 @@ for(0..9){
 }
 
 say("Result for",$result/10,"ms");
+$result=0;
+say("-----------------------");
+
+$sth = $dbh->prepare("CREATE INDEX inda on noti1(A)");
+say("CREATE INDEX inda on noti1(A)");
+$sth = $dbh->prepare("select A from noti1 where A > 3000");
+say("select A from noti1 where A > 3000");
+
+for(0..9){
+    my $t0 = [gettimeofday];
+
+    $sth->execute;
+
+    my $elapsed = tv_interval($t0);
+
+    say(int($elapsed * 1000),"ms");
+
+    $result +=(int($elapsed * 1000));
+}
+
+say("Result for",$result/10,"ms");
+
+
