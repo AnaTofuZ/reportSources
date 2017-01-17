@@ -42,7 +42,7 @@ say("CREATE INDEX inda on noti1(A)");
 $sth->execute;
 
 $sth = $dbh->prepare("select * from noti1 where A = 3000");
-say("select A from noti1 where A = 3000");
+say("select * from noti1 where A = 3000");
 
 for(0..9){
     my $t0 = [gettimeofday];
