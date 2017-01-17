@@ -15,7 +15,11 @@ my $dbh = DBI->connect("DBI:mysql:exam2","$ARGV[0]","$ARGV[1]",
         AutoCommit => 0
     });
 
+&queryDo($dbh,'select * from noti1 where C = "male"',9);
+&queryDo($dbh,'CREATE INDEX indc on noti1(C)',0);
+&queryDo($dbh,'select * from noti1 where C = "male"',9);
 
+$dbh->disconnect;
 
 
 sub queryDo {
