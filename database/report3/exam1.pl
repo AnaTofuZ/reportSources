@@ -8,4 +8,8 @@ use Time::HiRes;
 
 die "Use:$0 arg2 for username  pass" if(@ARGV != 2);
 
-my $dbh = DBI->connect("DBI:mysql:exam2","$ARGV[0]","$ARGV[1]");
+my $dbh = DBI->connect("DBI:mysql:exam2","$ARGV[0]","$ARGV[1]",
+    {
+        PrintError => 0,
+        AutoCommit => 0
+    });
