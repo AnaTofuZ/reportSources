@@ -19,23 +19,16 @@
 #define NOT_FOUNT 1
 
 static void list_dir(const char *base_path);
+static void puts_list(struct dirent *dp);
 
 int main(int argc, char * argv[]) {
 
     char *path = "./";
-    DIR *dirp;
 
     struct dirent *dent;
 
     if (argc >1){
         path = argv[1];
-    }
-
-    dirp = opendir(path);
-
-    if (dirp == NULL) {
-        perror(path);
-        return (EROOR);
     }
 
     list_dir(path);
@@ -57,8 +50,19 @@ static void list_dir(const char *base_path){
      }
 
     while ((dp = readdir(dir)) !=NULL) {
-        printf("%s\n", dp->d_name);
+         puts_list(dp);
     }
 
     closedir(dir);
+}
+
+static void puts_list(struct dirent *dp){
+
+    struct stat stat_buf;
+
+        if(stat(dp->d_name,&stat_buf) == 0){
+
+            printf("%s\n",dp->d_name);
+        }
+
 }
