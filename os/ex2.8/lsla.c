@@ -19,7 +19,7 @@
 #define NOT_FOUNT 1
 
 static void list_dir(const char *base_path);
-static void puts_list(struct dirent *dp);
+static void puts_list(struct dirent *dp,int *sum);
 
 int main(int argc, char * argv[]) {
 
@@ -41,6 +41,7 @@ static void list_dir(const char *base_path){
 
     DIR *dir;
     struct dirent *dp;
+    int blocksum = 0;
 
     dir = opendir(base_path);
     
@@ -50,19 +51,25 @@ static void list_dir(const char *base_path){
      }
 
     while ((dp = readdir(dir)) !=NULL) {
-         puts_list(dp);
+         puts_list(dp,&blocksum);
     }
+
+    printf("total %d\n",blocksum);
 
     closedir(dir);
 }
 
-static void puts_list(struct dirent *dp){
+static void puts_list(struct dirent *dp,int *sum){
 
-    struct stat stat_buf;
+    struct stat sb;
 
-        if(stat(dp->d_name,&stat_buf) == 0){
+    if(stat(dp->d_name,&sb) == 0){
 
-            printf("%s\n",dp->d_name);
-        }
+    if ((sb.st_mode & S_IFMT) == S_IFDIR){
+        printf("d");
+    }
 
+    *sum +=sb.st_blocks;
+
+    }
 }
