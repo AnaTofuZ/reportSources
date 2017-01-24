@@ -1,6 +1,6 @@
 //
 //  main.c
-//  Clsa
+//  lsla
 //
 //  Created by Takahiro SHIMIZU on 11/15/16.
 //  Copyright © 2016 ie-ryukyu. All rights reserved.
@@ -15,6 +15,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+static char *parse_cmd_args(int argc,char **argv);
+static void list_dir(const char *base_path);
 
 int main(int argc, char * argv[]) {
 
@@ -41,4 +44,24 @@ int main(int argc, char * argv[]) {
     closedir(dir);
 
     return 0;
+}
+
+
+static void list_dir(const char *base_path){
+
+    DIR *dir;
+    struct dirent *dent;
+
+    dir = opendir(base_path);
+    
+    if(dir == NULL){
+        perror(base_path);
+        return;
+     }
+
+    while ((dent = readdir(dir)) !=NULL) {
+        printf("%s\n", dent->d_name);
+    }
+
+    closedir(dir);
 }
