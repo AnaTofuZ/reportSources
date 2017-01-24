@@ -18,8 +18,8 @@
 #define FOUND 1
 #define NOT_FOUNT 1
 
-static void list_dir(const char *base_path);
-static void puts_list(struct dirent *dp,int *sum);
+void list_dir(const char *base_path);
+void puts_list(struct dirent *dp,int *sum);
 
 int main(int argc, char * argv[]) {
 
@@ -37,7 +37,7 @@ int main(int argc, char * argv[]) {
 }
 
 
-static void list_dir(const char *base_path){
+void list_dir(const char *base_path){
 
     DIR *dir;
     struct dirent *dp;
@@ -59,7 +59,7 @@ static void list_dir(const char *base_path){
     closedir(dir);
 }
 
-static void puts_list(struct dirent *dp,int *sum){
+void puts_list(struct dirent *dp,int *sum){
 
     struct stat sb;
 
