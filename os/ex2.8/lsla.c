@@ -14,15 +14,16 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#define EROOR 1
+#define FOUND 1
+#define NOT_FOUNT 1
 
-
-static char *parse_cmd_args(int argc,char **argv);
 static void list_dir(const char *base_path);
 
 int main(int argc, char * argv[]) {
 
     char *path = "./";
-    DIR *dir;
+    DIR *dirp;
 
     struct dirent *dent;
 
@@ -30,18 +31,14 @@ int main(int argc, char * argv[]) {
         path = argv[1];
     }
 
-    dir = opendir(path);
+    dirp = opendir(path);
 
-    if (dir == NULL) {
+    if (dirp == NULL) {
         perror(path);
-        return 1;
+        return (EROOR);
     }
 
-    while ((dent = readdir(dir)) !=NULL) {
-        printf("%s\n",dent->d_name);
-    }
-
-    closedir(dir);
+    list_dir(path);
 
     return 0;
 }
@@ -50,7 +47,7 @@ int main(int argc, char * argv[]) {
 static void list_dir(const char *base_path){
 
     DIR *dir;
-    struct dirent *dent;
+    struct dirent *dp;
 
     dir = opendir(base_path);
     
@@ -59,8 +56,8 @@ static void list_dir(const char *base_path){
         return;
      }
 
-    while ((dent = readdir(dir)) !=NULL) {
-        printf("%s\n", dent->d_name);
+    while ((dp = readdir(dir)) !=NULL) {
+        printf("%s\n", dp->d_name);
     }
 
     closedir(dir);
