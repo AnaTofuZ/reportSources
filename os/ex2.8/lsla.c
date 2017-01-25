@@ -25,7 +25,7 @@ void list_dir(const char *base_path);
 void puts_list(struct dirent *dp,int *sum);
 void get_detail(mode_t mode,char *get_show);
 char* get_username(uid_t uid);
-char* get_groupname(uid_t uid);
+char* get_groupname(gid_t gid);
 
 int main(int argc, char * argv[]) {
 
@@ -81,6 +81,7 @@ void puts_list(struct dirent *dp,int *sum){
     printf("%s  ",show);
     printf("%2d\t",sb.st_nlink);
     printf("%s\t",get_username(sb.st_uid));
+    printf("%s\t",get_groupname(sb.st_gid));
 
     *sum +=sb.st_blocks;
 
@@ -164,8 +165,14 @@ char* get_username(uid_t uid){
     }
 }
 
-char* get_groupname(uid_t uid){
-    char* group[12];
+char* get_groupname(gid_t gid){
+    char* groupname;
+    struct group *group = getgrgid(gid);
 
-    return *group;
+    if(group !=NULL){
+        return groupname = group->gr_name;
+    } else {
+        sprintf(groupname,"%d",gid); 
+        return groupname;
+    }
 }
