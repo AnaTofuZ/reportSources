@@ -1,6 +1,6 @@
 //
-//  main.c
-//  lsla
+//
+//  lsla.c
 //
 //  Created by Takahiro SHIMIZU on 11/15/16.
 //  Copyright © 2016 ie-ryukyu. All rights reserved.
@@ -8,11 +8,13 @@
 
 #include <stdio.h>
 #include <dirent.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <grp.h>
 #include <stdlib.h>
 #include <string.h>
 #define EROOR 1
@@ -22,7 +24,8 @@
 void list_dir(const char *base_path);
 void puts_list(struct dirent *dp,int *sum);
 void get_detail(mode_t mode,char *get_show);
-void get_username(uid_t uid);
+char* get_username(uid_t uid);
+char* get_groupname(uid_t uid);
 
 int main(int argc, char * argv[]) {
 
@@ -64,6 +67,10 @@ void list_dir(const char *base_path){
 
 void puts_list(struct dirent *dp,int *sum){
 
+  /**
+   * print ls elemtns and sum block size caluculation.
+   */
+
     struct stat sb;
 
     if(stat(dp->d_name,&sb) == 0){
@@ -72,7 +79,8 @@ void puts_list(struct dirent *dp,int *sum){
 
     get_detail(sb.st_mode,show);
     printf("%s  ",show);
-    printf("%d\t",sb.st_nlink);
+    printf("%2d\t",sb.st_nlink);
+    printf("%s\t",get_username(sb.st_uid));
 
     *sum +=sb.st_blocks;
 
@@ -80,7 +88,9 @@ void puts_list(struct dirent *dp,int *sum){
 }
 
 void get_detail(mode_t mode,char *get_show){
-
+/**
+ * get file mode . the entry type,owner permissions,and group permissions.
+ */
 
     switch (mode & S_IFMT) {
         case S_IFBLK:
@@ -142,7 +152,20 @@ void get_detail(mode_t mode,char *get_show){
 }
 
 
-void get_username(uid_t uid){
+char* get_username(uid_t uid){
+    char* username;
+    struct passwd *passwd = getpwuid(uid);
 
+    if (passwd != NULL) {
+        return username=passwd->pw_name;      
+    } else {
+        sprintf(username,"%d",uid);
+        return username;
+    }
+}
 
+char* get_groupname(uid_t uid){
+    char* group[12];
+
+    return *group;
 }
