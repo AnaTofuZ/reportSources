@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <time.h>
 #include <grp.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,13 +76,19 @@ void puts_list(struct dirent *dp,int *sum){
 
     if(stat(dp->d_name,&sb) == 0){
 
-    char show[12];
+    char show[10+1];
+    char times[13];
 
     get_detail(sb.st_mode,show);
     printf("%s  ",show);
-    printf("%2d\t",sb.st_nlink);
-    printf("%s\t",get_username(sb.st_uid));
-    printf("%s\t",get_groupname(sb.st_gid));
+    printf("%2d  ",sb.st_nlink);
+    printf("%s  ",get_username(sb.st_uid));
+    printf("%s  ",get_groupname(sb.st_gid));
+    printf("%6lld  ",sb.st_size);
+    strftime(times,sizeof(times),"%m %e %H:%M",localtime(&sb.st_ctime));
+    printf("%s ",times);
+    printf("%s",dp->d_name);
+    printf("\n");
 
     *sum +=sb.st_blocks;
 
@@ -154,24 +161,24 @@ void get_detail(mode_t mode,char *get_show){
 
 
 char* get_username(uid_t uid){
-    char* username;
     struct passwd *passwd = getpwuid(uid);
 
     if (passwd != NULL) {
-        return username=passwd->pw_name;      
+        return passwd->pw_name;
     } else {
+        char* username;
         sprintf(username,"%d",uid);
         return username;
     }
 }
 
 char* get_groupname(gid_t gid){
-    char* groupname;
     struct group *group = getgrgid(gid);
 
     if(group !=NULL){
-        return groupname = group->gr_name;
+        return group->gr_name;
     } else {
+        char* groupname;
         sprintf(groupname,"%d",gid); 
         return groupname;
     }
