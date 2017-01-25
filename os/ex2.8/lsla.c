@@ -71,7 +71,8 @@ void puts_list(struct dirent *dp,int *sum){
     char show[12];
 
     get_detail(sb.st_mode,show);
-    printf("%s",show);
+    printf("%s  ",show);
+    printf("%d\t",sb.st_nlink);
 
     *sum +=sb.st_blocks;
 
