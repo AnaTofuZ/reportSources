@@ -26,7 +26,7 @@ void get_username(uid_t uid);
 
 int main(int argc, char * argv[]) {
 
-    char *path = "./";
+    char *path = ".";
 
     struct dirent *dent;
 
@@ -68,7 +68,10 @@ void puts_list(struct dirent *dp,int *sum){
 
     if(stat(dp->d_name,&sb) == 0){
 
-    get_detail(sb.st_mode,NULL);
+    char show[12];
+
+    get_detail(sb.st_mode,show);
+    printf("%s",show);
 
     *sum +=sb.st_blocks;
 
@@ -133,6 +136,12 @@ void get_detail(mode_t mode,char *get_show){
     }
     
     get_show[10] ='\0';
+
+
+}
+
+
+void get_username(uid_t uid){
 
 
 }
