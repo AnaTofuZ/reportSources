@@ -21,22 +21,21 @@
 #define EROOR 1
 #define FOUND 1
 #define NOT_FOUNT 1
+#define PATH_MAX 4096
 
-void list_dir(const char *base_path);
+void list_dir(char *base_path);
 void puts_list(struct dirent *dp,int *sum);
 void get_detail(mode_t mode,char *get_show);
+char* pathlink(mode_t mode,char* name);
 char* get_username(uid_t uid);
 char* get_groupname(gid_t gid);
 
 int main(int argc, char * argv[]) {
 
-    char *path = ".";
+
+    char *path = argc >1 ? argv[1]:".";
 
     struct dirent *dent;
-
-    if (argc >1){
-        path = argv[1];
-    }
 
     list_dir(path);
 
@@ -44,7 +43,12 @@ int main(int argc, char * argv[]) {
 }
 
 
-void list_dir(const char *base_path){
+void list_dir(char *base_path){
+
+/**
+ * list_dir is use opendir and reaadir.
+ * print is total block  .
+ */
 
     DIR *dir;
     struct dirent *dp;
@@ -52,9 +56,9 @@ void list_dir(const char *base_path){
 
     dir = opendir(base_path);
     
-    if(dir == NULL){
+    if(dir == NULL || chdir(base_path) != 0){
         perror(base_path);
-        return;
+        return ;
      }
 
     while ((dp = readdir(dir)) !=NULL) {
@@ -74,7 +78,7 @@ void puts_list(struct dirent *dp,int *sum){
 
     struct stat sb;
 
-    if(stat(dp->d_name,&sb) == 0){
+    if(lstat(dp->d_name,&sb) == 0){
 
     char show[10+1];
     char times[13];
@@ -88,7 +92,8 @@ void puts_list(struct dirent *dp,int *sum){
     strftime(times,sizeof(times),"%m %e %H:%M",localtime(&sb.st_ctime));
     printf("%s ",times);
     printf("%s",dp->d_name);
-    printf("\n");
+    printf("%s\n",pathlink(sb.st_mode,dp->d_name));
+    //printf("\n");
 
     *sum +=sb.st_blocks;
 
@@ -159,8 +164,12 @@ void get_detail(mode_t mode,char *get_show){
 
 }
 
+/*
+ * get_* is using *id get to *name
+ */
 
 char* get_username(uid_t uid){
+
     struct passwd *passwd = getpwuid(uid);
 
     if (passwd != NULL) {
@@ -182,4 +191,23 @@ char* get_groupname(gid_t gid){
         sprintf(groupname,"%d",gid); 
         return groupname;
     }
+}
+
+/*
+ * pathlink show hardlink 
+ */
+
+char* pathlink(mode_t mode,char* name){
+    char* returnLink;
+
+    if (S_ISLNK(mode)){
+        char link[PATH_MAX +1];
+        int link_len = readlink(name,link,PATH_MAX);
+
+        if (link_len >0) {
+            link[link_len]='\0';
+            sprintf(returnLink," -> %s",link );
+        }
+    }
+    return returnLink;
 }
