@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <pwd.h>
 #include <stdlib.h>
 #include <string.h>
 #define EROOR 1
@@ -20,6 +21,8 @@
 
 void list_dir(const char *base_path);
 void puts_list(struct dirent *dp,int *sum);
+void get_detail(mode_t mode,char *get_show);
+void get_username(uid_t uid);
 
 int main(int argc, char * argv[]) {
 
@@ -65,11 +68,71 @@ void puts_list(struct dirent *dp,int *sum){
 
     if(stat(dp->d_name,&sb) == 0){
 
-    if ((sb.st_mode & S_IFMT) == S_IFDIR){
-        printf("d");
-    }
+    get_detail(sb.st_mode,NULL);
 
     *sum +=sb.st_blocks;
 
     }
+}
+
+void get_detail(mode_t mode,char *get_show){
+
+
+    switch (mode & S_IFMT) {
+        case S_IFBLK:
+             get_show[0] ='b';
+             break;
+        case S_IFCHR:
+             get_show[0] = 'c';
+             break;
+        case S_IFDIR:
+             get_show[0] ='d';
+             break;
+        case S_IFLNK:
+             get_show[0]= 'l';
+             break;
+        case S_IFSOCK:
+             get_show[0] ='s';
+             break;
+        case S_IFIFO:
+             get_show[0]='p';
+             break;
+        case S_IFREG:
+             get_show[0]='-';
+             break;
+        defalut:
+             get_show[0]='?';
+             break;
+    }
+
+    get_show[1]  = mode & S_IRUSR ? 'r':'-';
+    get_show[2]  = mode & S_IWUSR ? 'w':'-';
+
+    if (mode & S_ISUID) {
+        get_show[3] = mode & S_IXUSR ? 's':'S';
+    } else {
+        get_show[3] = mode & S_IXUSR ? 'x':'-';
+    }
+
+    get_show[4]  = mode & S_IRGRP ? 'r':'-';
+    get_show[5]  = mode & S_IWGRP ? 'w':'-';
+
+    if (mode & S_ISGID) {
+        get_show[6] = mode & S_IXGRP ? 's':'S';
+    } else {
+        get_show[6] = mode & S_IXGRP ? 'x':'-';
+    }
+
+    get_show[7]  = mode & S_IROTH ? 'r':'-';
+    get_show[8]  = mode & S_IWOTH ? 'w':'-';
+
+    if (mode & S_ISVTX) {
+        get_show[9] = mode & S_IXOTH ? 't':'T';
+    } else {
+        get_show[9] = mode & S_IXOTH ? 'x':'-';
+    }
+    
+    get_show[10] ='\0';
+
+
 }
