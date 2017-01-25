@@ -92,8 +92,9 @@ void puts_list(struct dirent *dp,int *sum){
     strftime(times,sizeof(times),"%m %e %H:%M",localtime(&sb.st_ctime));
     printf("%s ",times);
     printf("%s",dp->d_name);
-    printf("%s\n",pathlink(sb.st_mode,dp->d_name));
-    //printf("\n");
+
+    char *showlink = pathlink(sb.st_mode,dp->d_name);
+    showlink == NULL ? putchar('\n'):printf(" -> %s\n",showlink);
 
     *sum +=sb.st_blocks;
 
@@ -198,7 +199,7 @@ char* get_groupname(gid_t gid){
  */
 
 char* pathlink(mode_t mode,char* name){
-    char* returnLink;
+    char* returnLink =NULL;
 
     if (S_ISLNK(mode)){
         char link[PATH_MAX +1];
@@ -206,7 +207,7 @@ char* pathlink(mode_t mode,char* name){
 
         if (link_len >0) {
             link[link_len]='\0';
-            sprintf(returnLink," -> %s",link );
+            returnLink = link;
         }
     }
     return returnLink;
