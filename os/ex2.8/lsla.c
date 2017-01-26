@@ -36,7 +36,6 @@ int main(int argc, char * argv[]) {
 
     char *path = argc >1 ? argv[1]:".";
 
-    struct dirent *dent;
 
     list_dir(path);
 
@@ -62,7 +61,6 @@ void list_dir(char *base_path){
      }
 
     printf("total %d\n",sumTotal(dir,dp));
-//    rewinddir(dir);
 
     while ((dp = readdir(dir)) !=NULL) {
          puts_list(dp);
@@ -214,6 +212,9 @@ char* pathlink(mode_t mode,char* name){
     return returnLink;
 }
 
+/*
+ * sumTotal for get total block size
+ */
 
 unsigned int sumTotal(DIR *dir,struct dirent *dp){
 
