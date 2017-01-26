@@ -1,6 +1,6 @@
 //
 //
-//  lsla.c
+//  lslaR.c
 //
 //  Created by Takahiro SHIMIZU on 11/15/16.
 //  Copyright © 2016 ie-ryukyu. All rights reserved.
@@ -22,6 +22,8 @@
 #define FOUND 1
 #define NOT_FOUNT 1
 #define PATH_MAX 4096
+#define TIMES_CHAR 13
+#define LS_L_CHAR 10
 
 void list_dir(char *base_path);
 void puts_list(struct dirent *dp,int *sum);
@@ -53,6 +55,7 @@ void list_dir(char *base_path){
     DIR *dir;
     struct dirent *dp;
     int blocksum = 0;
+    char path[PATH_MAX+1];
 
     dir = opendir(base_path);
     
@@ -63,6 +66,17 @@ void list_dir(char *base_path){
 
     while ((dp = readdir(dir)) !=NULL) {
          puts_list(dp,&blocksum);
+
+         if(( dp->d_name[0] == '.') && ( dp->d_name[1 + (dp->d_name[1] == '.')] == '\0')){
+             continue;
+         }
+
+         if (dp->d_type == DT_DIR){
+             strncpy(&path[strlen(base_path)],dp->d_name,PATH_MAX - strlen(base_path));
+             printf("\n%s:\n",path);
+            list_dir(path);
+         }
+
     }
 
     printf("total %d\n",blocksum);
@@ -80,8 +94,8 @@ void puts_list(struct dirent *dp,int *sum){
 
     if(lstat(dp->d_name,&sb) == 0){
 
-    char show[10+1];
-    char times[13];
+    char show[LS_L_CHAR+1];
+    char times[TIMES_CHAR];
 
     get_detail(sb.st_mode,show);
     printf("%s  ",show);
@@ -212,3 +226,5 @@ char* pathlink(mode_t mode,char* name){
     }
     return returnLink;
 }
+
+
