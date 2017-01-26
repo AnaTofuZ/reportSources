@@ -195,7 +195,7 @@ char* get_groupname(gid_t gid){
 }
 
 /*
- * pathlink show hardlink 
+ * pathlink show symblolick link
  */
 
 char* pathlink(mode_t mode,char* name){
