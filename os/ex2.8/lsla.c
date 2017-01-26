@@ -62,7 +62,7 @@ void list_dir(char *base_path){
      }
 
     printf("total %d\n",sumTotal(dir,dp));
-    rewinddir(dir);
+//    rewinddir(dir);
 
     while ((dp = readdir(dir)) !=NULL) {
          puts_list(dp);
@@ -225,6 +225,7 @@ unsigned int sumTotal(DIR *dir,struct dirent *dp){
             sum +=sb.st_blocks;
         }
     }
+    rewinddir(dir);
     return sum;
 }
 
