@@ -2,7 +2,7 @@
 //
 //  lslaR.c
 //
-//  Created by Takahiro SHIMIZU on 11/15/16.
+//  Created by Takahiro SHIMIZU on 01/26/17.
 //  Copyright © 2016 ie-ryukyu. All rights reserved.
 //
 
@@ -23,6 +23,12 @@
 #define NOT_FOUNT 1
 #define PATH_MAX 4096
 
+typedef struct{
+    unsigned int stack_depth;
+    unsigned int  stack_depth_MAX;
+    DIR **dirp;
+} dir_stack;
+
 void list_dir(char *base_path);
 void puts_list(struct dirent *dp);
 void get_detail(mode_t mode,char *get_show);
@@ -33,10 +39,7 @@ unsigned int sumTotal(DIR *dir,struct dirent *dp);
 
 int main(int argc, char * argv[]) {
 
-
     char *path = argc >1 ? argv[1]:".";
-
-
     list_dir(path);
 
     return 0;
