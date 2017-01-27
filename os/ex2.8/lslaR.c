@@ -22,22 +22,20 @@
 #define FOUND 1
 #define NOT_FOUNT 1
 #define PATH_MAX 4096
-#define TIMES_CHAR 13
-#define LS_L_CHAR 10
 
 void list_dir(char *base_path);
-void puts_list(struct dirent *dp,int *sum);
+void puts_list(struct dirent *dp);
 void get_detail(mode_t mode,char *get_show);
 char* pathlink(mode_t mode,char* name);
 char* get_username(uid_t uid);
 char* get_groupname(gid_t gid);
+unsigned int sumTotal(DIR *dir,struct dirent *dp);
 
 int main(int argc, char * argv[]) {
 
 
     char *path = argc >1 ? argv[1]:".";
 
-    struct dirent *dent;
 
     list_dir(path);
 
@@ -54,8 +52,6 @@ void list_dir(char *base_path){
 
     DIR *dir;
     struct dirent *dp;
-    int blocksum = 0;
-    char path[PATH_MAX+1];
 
     dir = opendir(base_path);
     
@@ -64,27 +60,17 @@ void list_dir(char *base_path){
         return ;
      }
 
+    printf("total %d\n",sumTotal(dir,dp));
+
     while ((dp = readdir(dir)) !=NULL) {
-         puts_list(dp,&blocksum);
-
-         if(( dp->d_name[0] == '.') && ( dp->d_name[1 + (dp->d_name[1] == '.')] == '\0')){
-             continue;
-         }
-
-         if (dp->d_type == DT_DIR){
-             strncpy(&path[strlen(base_path)],dp->d_name,PATH_MAX - strlen(base_path));
-             printf("\n%s:\n",path);
-            list_dir(path);
-         }
-
+         puts_list(dp);
     }
 
-    printf("total %d\n",blocksum);
 
     closedir(dir);
 }
 
-void puts_list(struct dirent *dp,int *sum){
+void puts_list(struct dirent *dp){
 
   /**
    * print ls elemtns and sum block size caluculation.
@@ -94,8 +80,8 @@ void puts_list(struct dirent *dp,int *sum){
 
     if(lstat(dp->d_name,&sb) == 0){
 
-    char show[LS_L_CHAR+1];
-    char times[TIMES_CHAR];
+    char show[10+1];
+    char times[13];
 
     get_detail(sb.st_mode,show);
     printf("%s  ",show);
@@ -110,7 +96,6 @@ void puts_list(struct dirent *dp,int *sum){
     char *showlink = pathlink(sb.st_mode,dp->d_name);
     showlink == NULL ? putchar('\n'):printf(" -> %s\n",showlink);
 
-    *sum +=sb.st_blocks;
 
     }
 }
@@ -227,4 +212,21 @@ char* pathlink(mode_t mode,char* name){
     return returnLink;
 }
 
+/*
+ * sumTotal for get total block size
+ */
+
+unsigned int sumTotal(DIR *dir,struct dirent *dp){
+
+    unsigned int sum =0;
+    struct stat sb;
+
+   while((dp = readdir(dir)) !=NULL){     
+        if(lstat(dp->d_name,&sb) == 0){
+            sum +=sb.st_blocks;
+        }
+    }
+    rewinddir(dir);
+    return sum;
+}
 
