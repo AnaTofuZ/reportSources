@@ -23,19 +23,25 @@
 #define NOT_FOUNT 1
 #define PATH_MAX 4096
 
+// use recursion struct 
 typedef struct{
     unsigned int stack_depth;
     unsigned int  stack_depth_MAX;
     DIR **dirp;
 } dir_stack;
 
+// set method vefore ls -la 
 void list_dir(char *base_path);
+
+// modifed puts_list argments 
 void puts_list(struct dirent *dp);
 void get_detail(mode_t mode,char *get_show);
 char* pathlink(mode_t mode,char* name);
 char* get_username(uid_t uid);
 char* get_groupname(gid_t gid);
 unsigned int sumTotal(DIR *dir,struct dirent *dp);
+
+// make new method for pop and stack 
 
 int main(int argc, char * argv[]) {
 
@@ -45,13 +51,12 @@ int main(int argc, char * argv[]) {
     return 0;
 }
 
-
-void list_dir(char *base_path){
-
 /**
  * list_dir is use opendir and reaadir.
  * print is total block  .
  */
+
+void list_dir(char *base_path){
 
     DIR *dir;
     struct dirent *dp;
@@ -73,11 +78,11 @@ void list_dir(char *base_path){
     closedir(dir);
 }
 
-void puts_list(struct dirent *dp){
-
   /**
    * print ls elemtns and sum block size caluculation.
    */
+
+void puts_list(struct dirent *dp){
 
     struct stat sb;
 
@@ -103,10 +108,13 @@ void puts_list(struct dirent *dp){
     }
 }
 
+    /**
+     * get file mode . the entry type,owner permissions,and group permissions.
+     * show dis mode example S_IFBLK for man stat(lstat) pages
+     * get_show is examle "-rw-r--r--"
+     */
+
 void get_detail(mode_t mode,char *get_show){
-/**
- * get file mode . the entry type,owner permissions,and group permissions.
- */
 
     switch (mode & S_IFMT) {
         case S_IFBLK:
@@ -167,9 +175,9 @@ void get_detail(mode_t mode,char *get_show){
 
 }
 
-/*
- * get_* is using *id get to *name
- */
+    /*
+     * get_* is using *id get to *name
+     */
 
 char* get_username(uid_t uid){
 
@@ -196,9 +204,9 @@ char* get_groupname(gid_t gid){
     }
 }
 
-/*
- * pathlink show symblolick link
- */
+    /*
+     * pathlink show symblolick link
+     */
 
 char* pathlink(mode_t mode,char* name){
     char* returnLink =NULL;
@@ -215,9 +223,9 @@ char* pathlink(mode_t mode,char* name){
     return returnLink;
 }
 
-/*
- * sumTotal for get total block size
- */
+    /*
+     * sumTotal for get total block size
+     */
 
 unsigned int sumTotal(DIR *dir,struct dirent *dp){
 
