@@ -75,7 +75,9 @@ void list_dir(char *base_path){
     while ((dp = readdir(dir)) !=NULL) {
          puts_list(dp);
     }
+    rewinddir(dir);
 
+    search_directory(dir,dp,base_path);
 
     closedir(dir);
 }
@@ -243,6 +245,11 @@ unsigned int sumTotal(DIR *dir,struct dirent *dp){
     return sum;
 }
 
+/*
+ * find direcotory at change dir and roopback 
+ */
+
+
 void search_directory(DIR *dir,struct dirent *dp,char *now_path){
 
    char next_path[PATH_MAX];
@@ -250,16 +257,19 @@ void search_directory(DIR *dir,struct dirent *dp,char *now_path){
 
    while((dp = readdir(dir)) !=NULL){     
 
-       /*
-        * exclusion current and parent
-        */
-       if(strcmp(dp->d_name,".")==0 ||strcmp(dp->d_name,"..")==0){
-        continue;
-        }
+       if(dp->d_type == DT_DIR){
+           /*
+            * exclusion current and parent
+            */
+           if(strcmp(dp->d_name,".")==0 ||strcmp(dp->d_name,"..")==0){
+            continue;
+            }
     
-       memset(next_path,0,sizeof(next_path));
-       sprintf(next_path,"%s/%s",now_path,dp->d_name);
-
+           memset(next_path,0,sizeof(next_path));
+           sprintf(next_path,"%s/%s",now_path,dp->d_name);
+           printf("%s",next_path);
+           list_dir(next_path);
+        }
    }
 
 
