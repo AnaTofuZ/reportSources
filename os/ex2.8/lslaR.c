@@ -30,7 +30,7 @@ typedef struct{
     DIR **dirp;
 } dir_stack;
 
-// set method vefore ls -la 
+// set function  vefore ls -la 
 void list_dir(char *base_path);
 
 // modifed puts_list argments 
@@ -41,7 +41,9 @@ char* get_username(uid_t uid);
 char* get_groupname(gid_t gid);
 unsigned int sumTotal(DIR *dir,struct dirent *dp);
 
-// make new method for pop and stack 
+// make new function  for pop and stack 
+void stack_depth(dir_stack *d_stack,char *base_path);
+void search_directory(DIR *dir,struct dirent *dp,char *now_path);
 
 int main(int argc, char * argv[]) {
 
@@ -241,3 +243,24 @@ unsigned int sumTotal(DIR *dir,struct dirent *dp){
     return sum;
 }
 
+void search_directory(DIR *dir,struct dirent *dp,char *now_path){
+
+   char next_path[PATH_MAX];
+   struct stat sb;
+
+   while((dp = readdir(dir)) !=NULL){     
+
+       /*
+        * exclusion current and parent
+        */
+       if(strcmp(dp->d_name,".")==0 ||strcmp(dp->d_name,"..")==0){
+        continue;
+        }
+    
+       memset(next_path,0,sizeof(next_path));
+       sprintf(next_path,"%s/%s",now_path,dp->d_name);
+
+   }
+
+
+}
