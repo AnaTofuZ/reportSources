@@ -24,11 +24,6 @@
 #define PATH_MAX 4096
 
 // use recursion struct 
-typedef struct{
-    unsigned int stack_depth;
-    unsigned int  stack_depth_MAX;
-    DIR **dirp;
-} dir_stack;
 
 // set function  vefore ls -la 
 void list_dir(char *base_path);
@@ -41,8 +36,7 @@ char* get_username(uid_t uid);
 char* get_groupname(gid_t gid);
 unsigned int sumTotal(DIR *dir,struct dirent *dp);
 
-// make new function  for pop and stack 
-void stack_depth(dir_stack *d_stack,char *base_path);
+// make new function  
 void search_directory(DIR *dir,struct dirent *dp,char *now_path);
 
 int main(int argc, char * argv[]) {
@@ -256,6 +250,10 @@ void search_directory(DIR *dir,struct dirent *dp,char *now_path){
    struct stat sb;
 
    while((dp = readdir(dir)) !=NULL){     
+
+        /*
+         * This function search direcotory not use except direcotory files
+         */
 
        if(dp->d_type == DT_DIR){
            /*
