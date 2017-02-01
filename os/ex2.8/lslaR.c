@@ -22,11 +22,11 @@
 #define FOUND 1
 #define NOT_FOUNT 1
 #define PATH_MAX 4096
+#define STACK_SIZE 10
 
-// use recursion struct 
 
 // set function  vefore ls -la 
-void list_dir(char *base_path);
+void list_dir(DIR *stack,char *base_path,unsigned int deepth,unsigned int new_deep);
 
 // modifed puts_list argments 
 void puts_list(struct dirent *dp);
@@ -37,13 +37,20 @@ char* get_groupname(gid_t gid);
 unsigned int sumTotal(DIR *dir,struct dirent *dp);
 
 // make new function  
-void search_directory(DIR *dir,struct dirent *dp,char *now_path);
+void search_directory(DIR *stack,DIR *dir,struct dirent *dp,char *now_path,unsigned int deepth,unsigned int new_deep);
+void push_stack(DIR *stack,DIR *dirp,unsigned int deepth,unsigned int new_deep);
 
 int main(int argc, char * argv[]) {
 
-    char *path = argc >1 ? argv[1]:".";
-    list_dir(path);
+    unsigned int deepth=0;
+    unsigned int new_deep=0;
+    DIR *stack = (DIR *)calloc(sizeof(DIR),STACK_SIZE);
 
+
+    char *path = argc >1 ? argv[1]:".";
+    list_dir(stack,path,deepth,new_deep);
+
+    free(stack);
     return 0;
 }
 
@@ -52,7 +59,7 @@ int main(int argc, char * argv[]) {
  * print is total block  .
  */
 
-void list_dir(char *base_path){
+void list_dir(DIR *stack,char *base_path,unsigned int deepth,unsigned int new_deep){
 
     DIR *dir;
     struct dirent *dp;
@@ -62,6 +69,8 @@ void list_dir(char *base_path){
     if(dir == NULL || chdir(base_path) != 0){
         perror(base_path);
         return ;
+     }else{
+         push_stack(stack,dir,deepth,new_deep);
      }
 
     printf("total %d\n",sumTotal(dir,dp));
@@ -71,7 +80,7 @@ void list_dir(char *base_path){
     }
     rewinddir(dir);
 
-    search_directory(dir,dp,base_path);
+    search_directory(stack,dir,dp,base_path,deepth,new_deep);
 
     closedir(dir);
 }
@@ -244,7 +253,7 @@ unsigned int sumTotal(DIR *dir,struct dirent *dp){
  */
 
 
-void search_directory(DIR *dir,struct dirent *dp,char *now_path){
+void search_directory(DIR *stack,DIR *dir,struct dirent *dp,char *now_path,unsigned int deepth,unsigned int new_deep){
 
    char next_path[PATH_MAX];
    struct stat sb;
@@ -265,10 +274,31 @@ void search_directory(DIR *dir,struct dirent *dp,char *now_path){
     
            memset(next_path,0,sizeof(next_path));
            sprintf(next_path,"%s/%s",now_path,dp->d_name);
-           printf("%s",next_path);
-           list_dir(next_path);
+           printf("%s:\n",next_path);
+           list_dir(stack,next_path,deepth,new_deep);
         }
    }
 
 
 }
+
+// stack push
+
+void push_stack(DIR *stack,DIR *dir,unsigned int deepth,unsigned int new_deep){
+
+    if(deepth >= new_deep + STACK_SIZE){
+        DIR *new;
+        new_deep++;
+        new = (DIR *)realloc(stack,sizeof(DIR)* (STACK_SIZE + new_deep));
+
+        if (new == NULL) {
+            free(stack);
+        } else {
+            dir = new;
+        }
+    }
+        stack[deepth] = *dir;
+        deepth++;
+}
+
+
