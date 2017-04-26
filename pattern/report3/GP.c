@@ -1,3 +1,12 @@
+/*
+ *
+ * 認知工学 DPマッチングを用いて異なる文字数を決定するプログラム
+ * Author <c> 清水隆博 @AnaTofuZ
+ *      2017/04/26
+ *
+ */
+
+
 #include <stdio.h>
 #include <string.h>
 
@@ -21,10 +30,21 @@ int main(int ac,char *av[]){
     int I = strlen(Inp1);
     int J = strlen(Inp2);
 
+    printf("%d\n",d(Inp1[0],Inp2[0]));
+
     printf("%d\n",I);
+
+
+    for (int j = 0; j < J; j++) {
+
+        for (int i = 0; i < I; i++) {
+            
+        }
+    }
     return 0;
 }
 
+// usage関数
 // 使い方を出力
 
 void usage(void){
