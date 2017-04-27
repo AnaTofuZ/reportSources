@@ -56,28 +56,87 @@ int main(int ac,char *av[]){
         printf("\n");
     }
 
+    // for文でIをデクリメントしてしまったので戻す．
+    I++;
 
     // 2次元配列g[I][J]を作成
 
     int g[I][J];
 
-    // 横一列のみ初期設定
+    // 下一行のみ初期設定
 
     for (int j = 0; j < J; j++) {
         
+    // 初回は定義より 2*D[0][0]をいれる．
         if(j==0){
-            g[0][0] = 2 * D[0][0];
+            g[0][0] =2*D[0][0];
         }else{
-            int i=--j;
-            g[0][j] = g[0][i] + D[0][j];
+            int j_decry=j;
+            j_decry--;
+        // それ以外は左隣のものの距離を足す
+            g[0][j] = (g[0][j_decry] + D[0][j]);
         }
     }
 
+    // 上の行を処理していく
+
     for (int i = 1; i < I; i++) {
         for (int j = 0; j < J; j++) {
+
+        // 1番左の列で無いかどうかの判断
+
+            if (j !=0) {
+                
+                int min,i_decry,j_decry;
+
+                i_decry = i;
+                j_decry = j;
+
+                i_decry--;
+                j_decry--;
+
+                //現段階の最小値は左と足したもの
+
+                min = g[i_decry][j]+D[i][j];
+
+                // 左斜め下が最小値の場合,そちらを採用
+
+                if(min > g[i_decry][j_decry]+ 2*D[i][j]){
+                    min = g[i_decry][j_decry]+ 2*D[i][j];
+
+                // 下が最小値の場合,そちらを採用
+
+                    if (min > g[i][j_decry] + D[i][j]){
+                        g[i][j] = g[i][j_decry] + D[i][j];
+                        continue;
+                    }
+                   g[i][j]=min;
+                   continue;
+                }
+                
+                g[i][j]=min;
+
+            } else {
+                int  i_decry = i;
+                // 1番左の列の場合1つ下のものとの距離を計算
+                i_decry--;
+                 g[i][0] = g[i_decry][0]+D[i][0]; 
+            }
             
         }
     }
+
+    puts("g(i,j)");
+
+    for (int i = --I; 0 <= i ; i--) {
+        for (int j =0; j < J ; j++) {
+                printf("%3d",g[i][j]);
+        }
+        printf("\n");
+    }
+
+    puts("-----");
+    printf("This words diff :%3d\n",g[I][--J]);
 
     return 0;
 }
@@ -103,3 +162,4 @@ int d(char i,char j){
     }
 
 }
+
