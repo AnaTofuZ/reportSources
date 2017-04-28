@@ -49,15 +49,13 @@ int main(int ac,char *av[]){
 
     puts("d(i,j)");
 
-    for (int i = --I; 0 <= i ; i--) {
+    for (int i = (I-1); 0 <= i ; i--) {
         for (int j =0; j < J ; j++) {
                 printf("%3d",D[i][j]);
         }
         printf("\n");
     }
 
-    // for文でIをデクリメントしてしまったので戻す．
-    I++;
 
     // 2次元配列g[I][J]を作成
 
@@ -71,10 +69,8 @@ int main(int ac,char *av[]){
         if(j==0){
             g[0][0] =2*D[0][0];
         }else{
-            int j_decry=j;
-            j_decry--;
         // それ以外は左隣のものの距離を足す
-            g[0][j] = (g[0][j_decry] + D[0][j]);
+            g[0][j] = (g[0][j-1] + D[0][j]);
         }
     }
 
@@ -86,28 +82,21 @@ int main(int ac,char *av[]){
         // 1番左の列で無いかどうかの判断
 
             if (j !=0) {
-                
-                int min,i_decry,j_decry;
 
-                i_decry = i;
-                j_decry = j;
-
-                i_decry--;
-                j_decry--;
 
                 //現段階の最小値は左と足したもの
 
-                min = g[i_decry][j]+D[i][j];
+               int  min = g[i-1][j]+D[i][j];
 
                 // 左斜め下が最小値の場合,そちらを採用
 
-                if(min > g[i_decry][j_decry]+ 2*D[i][j]){
-                    min = g[i_decry][j_decry]+ 2*D[i][j];
+                if(min > g[i-1][j-1]+ 2*D[i][j]){
+                    min = g[i-1][j-1]+ 2*D[i][j];
 
                 // 下が最小値の場合,そちらを採用
 
-                    if (min > g[i][j_decry] + D[i][j]){
-                        g[i][j] = g[i][j_decry] + D[i][j];
+                    if (min > g[i][j-1] + D[i][j]){
+                        g[i][j] = g[i][j-1] + D[i][j];
                         continue;
                     }
                    g[i][j]=min;
@@ -117,10 +106,8 @@ int main(int ac,char *av[]){
                 g[i][j]=min;
 
             } else {
-                int  i_decry = i;
                 // 1番左の列の場合1つ下のものとの距離を計算
-                i_decry--;
-                 g[i][0] = g[i_decry][0]+D[i][0]; 
+                 g[i][0] = g[i-1][0]+D[i][0]; 
             }
             
         }
@@ -128,7 +115,7 @@ int main(int ac,char *av[]){
 
     puts("g(i,j)");
 
-    for (int i = --I; 0 <= i ; i--) {
+    for (int i = (I-1); 0 <= i ; i--) {
         for (int j =0; j < J ; j++) {
                 printf("%3d",g[i][j]);
         }
@@ -136,7 +123,7 @@ int main(int ac,char *av[]){
     }
 
     puts("-----");
-    printf("This words diff :%3d\n",g[I][--J]);
+    printf("This words diff :%3d\n",g[I-1][J-1]);
 
     return 0;
 }
@@ -145,7 +132,7 @@ int main(int ac,char *av[]){
 // 使い方を出力
 
 void usage(void){
-    puts("Usage> ./GP abcde abfeg");
+    puts("Usage> ./DP abcde abfeg");
 }
 
 
